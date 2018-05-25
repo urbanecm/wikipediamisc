@@ -14,8 +14,9 @@ if 'QUERY_STRING' in os.environ:
 	QS = os.environ['QUERY_STRING']
 	qs = cgi.parse_qs(QS)
 	try:
-		rev_first = qs['rev_first'][0]
-		rev_second = qs['rev_second'][0]
+		rev_page = int(qs['rev_page'][0])
+		rev_first = int(qs['rev_first'][0])
+		rev_second = int(qs['rev_second'][0])
 	except:
 		print '{"error": "no rev_id"}'
 		sys.exit(0)
@@ -28,7 +29,8 @@ else:
 conn = db.connect('cswiki')
 cur = conn.cursor()
 with cur:
-	sql = 'select rc_id from recentchanges where rc_this_oldid >= ' + rev_first + ' and rc_this_oldid <= ' + rev_second + ' and rc_patrolled=0;'
+	sql = 'select rc_id from revision join recentchanges on rc_this_oldid=rev_id'
+	sql += ' where rev_page=' + str(rev_page) + ' and rc_this_oldid > ' + str(rev_first) + ' and rc_this_oldid <= ' + str(rev_second) + ' and rc_patrolled=0;'
 	cur.execute(sql)
 	result = []
 	for row in cur.fetchall():
