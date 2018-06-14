@@ -18,6 +18,13 @@ if 'QUERY_STRING' in os.environ:
 	except:
 		print '{"error": "user_name"}'
 		sys.exit(0)
+        try:
+                if len(qs['revids']) > 0:
+                        field = "rc_this_oldid"
+                else:
+                        field = "rc_id"
+        except:
+                field = "rc_id"
 else:
 	print '{"error": "user_name"}'
 	sys.exit(0)
@@ -27,7 +34,7 @@ else:
 conn = db.connect('cswiki')
 cur = conn.cursor()
 with cur:
-	sql = 'select rc_id from recentchanges where rc_user_text="%s"' % user_name
+	sql = 'select %s from recentchanges where rc_user_text="%s"' % (field, user_name)
 	cur.execute(sql)
 	result = []
 	for row in cur.fetchall():

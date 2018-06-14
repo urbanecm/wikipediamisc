@@ -20,6 +20,13 @@ if 'QUERY_STRING' in os.environ:
 	except:
 		print '{"error": "no rev_id"}'
 		sys.exit(0)
+        try:
+                if len(qs['revids']) > 0:
+                        field = "rc_this_oldid"
+                else:
+                        field = "rc_id"
+        except:
+                field = "rc_id"
 else:
 	print '{"error": "no rev_id"}'
 	sys.exit(0)
@@ -29,7 +36,7 @@ else:
 conn = db.connect('cswiki')
 cur = conn.cursor()
 with cur:
-	sql = 'select rc_id from revision join recentchanges on rc_this_oldid=rev_id'
+	sql = 'select %s from revision join recentchanges on rc_this_oldid=rev_id' % field
 	sql += ' where rev_page=' + str(rev_page) + ' and rc_this_oldid > ' + str(rev_first) + ' and rc_this_oldid <= ' + str(rev_second) + ' and rc_patrolled=0;'
 	cur.execute(sql)
 	result = []
