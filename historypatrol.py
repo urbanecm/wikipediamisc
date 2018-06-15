@@ -19,12 +19,9 @@ if 'QUERY_STRING' in os.environ:
 		print '{"error": "no rev_page"}'
 		sys.exit(0)
 	try:
-		if len(qs['revids']) > 0:
-			field = "rc_this_oldid"
-		else:
-			field = "rc_id"
+		new_format = qs['format'][0] == 'new'
 	except:
-		field = "rc_id"
+		new_format = False
 else:
 	print '{"error": "no rev_page"}'
 	sys.exit(0)
@@ -34,9 +31,10 @@ else:
 conn = db.connect('cswiki')
 cur = conn.cursor()
 with cur:
-	sql = 'select %s from revision join recentchanges on rc_this_oldid=rev_id where rev_page=%s and rc_patrolled=0;' % (field, str(rev_page))
+	sql = 'select rev_id, rc_id from revision join recentchanges on rc_this_oldid=rev_id where rev_page=%s and rc_patrolled=0;' % str(rev_page)
 	cur.execute(sql)
-	result = []
-	for row in cur.fetchall():
-		result.append(row[0])
+	if new_format:
+		result = dict(cur.fetchall())
+	else:
+		result.extend(row[1] for row in cur.fetchall())
 	print json.dumps(result)

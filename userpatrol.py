@@ -18,13 +18,10 @@ if 'QUERY_STRING' in os.environ:
 	except:
 		print '{"error": "user_name"}'
 		sys.exit(0)
-        try:
-                if len(qs['revids']) > 0:
-                        field = "rc_this_oldid"
-                else:
-                        field = "rc_id"
-        except:
-                field = "rc_id"
+	try:
+		new_format = qs['format'][0] == 'new'
+	except:
+		new_format = False
 else:
 	print '{"error": "user_name"}'
 	sys.exit(0)
@@ -34,9 +31,10 @@ else:
 conn = db.connect('cswiki')
 cur = conn.cursor()
 with cur:
-	sql = 'select %s from recentchanges where rc_user_text="%s" and rc_patrolled=0' % (field, user_name)
+	sql = 'select rev_id, rc_id from recentchanges where rc_user_text="%s" and rc_patrolled=0;' % user_name
 	cur.execute(sql)
-	result = []
-	for row in cur.fetchall():
-		result.append(row[0])
+	if new_format:
+		result = dict(cur.fetchall())
+	else:
+		result.extend(row[1] for row in cur.fetchall())
 	print json.dumps(result)
