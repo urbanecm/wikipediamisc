@@ -34,7 +34,7 @@ else:
 conn = db.connect('cswiki')
 cur = conn.cursor()
 with cur:
-	sql = 'select %s from recentchanges where rc_user_text="%s"' % (field, user_name)
+	sql = 'select %s from recentchanges where rc_user_text="%s" and rc_patrolled=0' % (field, user_name)
 	cur.execute(sql)
 	result = []
 	for row in cur.fetchall():
