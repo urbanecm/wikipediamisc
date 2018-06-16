@@ -36,5 +36,6 @@ with cur:
 	if new_format:
 		result = dict(cur.fetchall())
 	else:
+		result = []
 		result.extend(row[1] for row in cur.fetchall())
 	print json.dumps(result)
