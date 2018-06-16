@@ -33,7 +33,7 @@ else:
 conn = db.connect('cswiki')
 cur = conn.cursor()
 with cur:
-	sql = 'select rev_id, rc_id from revision join recentchanges on rc_this_oldid=rev_id'
+	sql = 'select rc_this_oldid, rc_id from revision join recentchanges on rc_this_oldid=rev_id'
 	sql += ' where rev_page=' + str(rev_page) + ' and rc_this_oldid > ' + str(rev_first) + ' and rc_this_oldid <= ' + str(rev_second) + ' and rc_patrolled=0;'
 	cur.execute(sql)
 	if new_format:
