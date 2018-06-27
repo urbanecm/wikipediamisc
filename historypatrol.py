@@ -22,13 +22,17 @@ if 'QUERY_STRING' in os.environ:
 		new_format = qs['format'][0] == 'new'
 	except:
 		new_format = False
+	try:
+		wiki = qs['wiki'][0]
+	except:
+		wiki = 'cswiki'
 else:
 	print '{"error": "no rev_page"}'
 	sys.exit(0)
 
 ##### PROGRAM ####
 
-conn = db.connect('cswiki')
+conn = db.connect(wiki)
 cur = conn.cursor()
 with cur:
 	sql = 'select rc_this_oldid, rc_id from revision join recentchanges on rc_this_oldid=rev_id where rev_page=%s and rc_patrolled=0;' % str(rev_page)
