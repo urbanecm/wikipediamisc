@@ -7,7 +7,7 @@ from wmflabs import db
 import json
 
 #Print header
-print 'Content-type: application/json\n'
+print('Content-type: application/json\n')
 
 # Fetch params
 if 'QUERY_STRING' in os.environ:
@@ -18,7 +18,7 @@ if 'QUERY_STRING' in os.environ:
 		rev_first = int(qs['rev_first'][0])
 		rev_second = int(qs['rev_second'][0])
 	except:
-		print '{"error": "no rev_id"}'
+		print('{"error": "no rev_id"}')
 		sys.exit(0)
 	try:
 		new_format = qs['format'][0] == 'new'
@@ -29,7 +29,7 @@ if 'QUERY_STRING' in os.environ:
 	except:
 		wiki = 'cswiki'
 else:
-	print '{"error": "no rev_id"}'
+	print('{"error": "no rev_id"}')
 	sys.exit(0)
 
 ##### PROGRAM ####
@@ -45,4 +45,4 @@ with cur:
 	else:
 		result = []
 		result.extend(row[1] for row in cur.fetchall())
-	print json.dumps(result)
+	print(json.dumps(result))
